@@ -7,10 +7,19 @@ from datetime import datetime,date
 app = FastAPI()
 API_KEY = "MY_SUPER_SECRET_KEY"
 
-# Dependency to check API key
-def verify_api_key(authorization: str = Header(None)):
-    if authorization != f"Bearer {API_KEY}":
+## Dependency to check API key
+#def verify_api_key(authorization: str = Header(None)):
+#    if authorization != f"Bearer {API_KEY}":
+#        raise HTTPException(status_code=403, detail="Forbidden: Invalid API Key")
+
+# GLOBAL API KEY
+@app.middleware("http")
+async def check_api_key(request: Request, call_next):
+    auth_header = request.headers.get("Authorization")
+    if auth_header != f"Bearer {API_KEY}":
         raise HTTPException(status_code=403, detail="Forbidden: Invalid API Key")
+    return await call_next(request)
+
 
 @app.get("/test-date")
 def test_date(day: int = Query(..., ge=1, le=31),
@@ -30,7 +39,7 @@ def test_date(day: int = Query(..., ge=1, le=31),
 # test with https://test1-b0f3.onrender.com/test-date?day=2&month=11&year=2025
 
 
-@app.get("/get-date", dependencies=[Depends(verify_api_key)])
+@app.get("/get-date")
 def get_date():
     # Get current date
     current_date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -51,6 +60,7 @@ def ping():
 @app.get("/")
 def read_root():
     return {"message": "Hello, Render!"}
+
 
 
 
