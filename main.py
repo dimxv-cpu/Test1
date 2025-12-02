@@ -6,7 +6,7 @@ from datetime import datetime
 
 app = FastAPI()
 
-app.get("/test-date")
+@app.get("/test-date")
 def test_date(day: int = Query(..., ge=1, le=31),
               month: int = Query(..., ge=1, le=12),
               year: int = Query(..., ge=1)):
@@ -45,6 +45,7 @@ def ping():
 @app.get("/")
 def read_root():
     return {"message": "Hello, Render!"}
+
 
 
 
