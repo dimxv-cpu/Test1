@@ -1,6 +1,6 @@
 
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from fastapi.responses import FileResponse
 from datetime import datetime
 
@@ -20,6 +20,8 @@ def test_date(day: int = Query(..., ge=1, le=31),
         f.write(f"Provided date: {custom_date.strftime('%Y-%m-%d')}\n")
 
     return FileResponse(path=file_name, filename=file_name, media_type="text/plain")
+
+# test with https://test1-b0f3.onrender.com/test-date?day=2&month=11&year=2025
 
 
 @app.get("/get-date")
@@ -43,6 +45,7 @@ def ping():
 @app.get("/")
 def read_root():
     return {"message": "Hello, Render!"}
+
 
 
 
